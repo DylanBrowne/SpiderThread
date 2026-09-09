@@ -1,0 +1,9 @@
+{
+    "workbench.colorTheme": "Dark Modern",
+    "redhat.telemetry.enabled": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "workbench.editorAssociations": {
+        "*.db": "default"
+    },
+    "editor.inlineSuggest.enabled": false
+}
