@@ -26,6 +26,8 @@ public class PageFetcher {
         }
     }
 
+
+    // Extracts the host name from the URL, which is the part between "://" and the next "/"
     private String getHostName() {
         if (myURL == null) return null;
         // 0123456789
@@ -40,6 +42,7 @@ public class PageFetcher {
         return myURL.substring(start, end);
     }
 
+    // Determines the port number based on the protocol specified in the URL. Defaults to 80 for HTTP and 443 for HTTPS. Throws an exception for unsupported protocols.
     private int getPortNumber() {
         if (myURL.toLowerCase().startsWith("https://")) {
             return 443;
@@ -50,6 +53,7 @@ public class PageFetcher {
         }
     }
 
+    // Extracts the path from the URL, which is everything after the host name
     private String getPath() {
         String host = getHostName();
         int pathStart = myURL.indexOf(host) + host.length();
