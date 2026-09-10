@@ -10,28 +10,37 @@ public class PageFetcher {
 
     // Constructor
     public PageFetcher(final String theURL) {
+        if (theURL == null) {
+            throw new IllegalArgumentException("URL field not provided.");
+        }
+
         myURL = theURL;
     }
 
-    public static void fetch(String url) {
+    public void fetch() {
         String hostName = getHostName();
         int portNumber = getPortNumber();
 
         try {
-            Socket echoSocket = new Socket(hostName, portNumber);
+            Socket socket = new Socket(hostName, portNumber);
         }
     }
 
-    private static String getHostName() {
+    private String getHostName() {
+        if (myURL == null) return null;
         // 0123456789
         // https://www.google.com/blah/blah
         int start = myURL.indexOf("://") + 3;
         int end = myURL.indexOf("/", start);
 
+        if (end == -1) {
+            end = myURL.length(); // Handle URLs without a trailing path like "https://google.com"
+        }
+
         return myURL.substring(start, end);
     }
 
-    private static int getPortNumber() {
+    private int getPortNumber() {
         if (myURL.toLowerCase().startsWith("https://")) {
             return 443;
         } else if (myURL.toLowerCase().startsWith("http://")) {
@@ -39,6 +48,17 @@ public class PageFetcher {
         } else {
             throw new IllegalArgumentException("Unsupported or missing protocol in URL: " + myURL);
         }
+    }
+
+    private String getPath() {
+        String host = getHostName();
+        int pathStart = myURL.indexOf(host) + host.length();
+
+        if (pathStart >= myURL.length()) {
+            return "/";
+        }
+
+        return myURL.substring(pathStart);
     }
 
     
