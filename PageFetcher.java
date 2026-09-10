@@ -1,16 +1,16 @@
 import java.net.Socket;
-import java.net.ssl.SSLSocket;
-import java.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 
 // This class takes a URL and fetches its raw HTML content to be passed to WebCrawler.java
 public class PageFetcher {
 
-    private String myURL;
+    final private String myURL;
 
     // Constructor
     public PageFetcher(final String theURL) {
-        if (theURL == null) {
+        if (theURL == null || theURL.trim().isEmpty()) {
             throw new IllegalArgumentException("URL field not provided.");
         }
 
@@ -18,11 +18,18 @@ public class PageFetcher {
     }
 
     public void fetch() {
-        String hostName = getHostName();
-        int portNumber = getPortNumber();
+        final String hostName = getHostName();
+        final int portNumber = getPortNumber();
+        final String path = getPath();
+        
+        Socket socket;
 
         try {
-            Socket socket = new Socket(hostName, portNumber);
+            if (portNumber == 443) {
+                SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+            } else {
+                socket = new Socket(hostName, portNumber);
+            }
         }
     }
 
