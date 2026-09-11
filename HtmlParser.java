@@ -8,15 +8,15 @@ public class HtmlParser {
         int currentIndex = 0;
 
         // Traverse the entire HTML
-        while (!currentIndex.equals(theHtml.length())) {
+        while (currentIndex != theHtml.length()) {
 
             char currentChar = theHtml.charAt(currentIndex);
 
             // Parse the tag
             if (currentChar == '<') {
-                
-                String tag = getTag(currentIndex + 1, theHtml);
-                currentIndex += tag.length() + 2; // +2 for the '<' and '>'
+                String tag = getTag(currentIndex + 1, theHtml); // (currentIndex + 1) to get past the starting '<'
+                System.out.println("Tag: " + tag);
+                currentIndex += tag.length() + 1; // (tag.length() + 1) to get past the ending '>'
 
             // Parse the text
             } else {

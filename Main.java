@@ -12,15 +12,24 @@ public class Main {
         Scanner sc = new Scanner(System.in);
 
 
-        System.out.print("Please enter the URL: ");
-        final String theURL = sc.nextLine();
+        //System.out.print("Please enter the URL: ");
+        //final String theURL = sc.nextLine();
 
-        System.out.println("You entered: " + theURL);
+        //System.out.println("You entered: " + theURL);
 
-        PageFetcher fetcher = new PageFetcher(theURL);
-        System.out.println(fetcher.fetch());
+        //PageFetcher fetcher = new PageFetcher(theURL);
+        //System.out.println(fetcher.fetch());
         
-        sc.close();
+        //sc.close();
+
+
+
+        HtmlParser parser = new HtmlParser();
+
+        parser.parse("<div><p>Hello</p></div>");
+
+        System.out.println("END OF PROGRAM");
+        System.out.println("Expected:\nTag: div\nTag: p\nTag: /p\nTag: /div");
     }
 }
 
