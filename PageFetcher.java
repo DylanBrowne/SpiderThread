@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -17,20 +22,45 @@ public class PageFetcher {
         myURL = theURL;
     }
 
-    public void fetch() {
+    public String fetch() {
         final String hostName = getHostName();
         final int portNumber = getPortNumber();
         final String path = getPath();
         
         Socket socket;
+        StringBuilder html = new StringBuilder();
 
         try {
+            // Use SSLSocket for HTTPS (Port 443), regular Socket for HTTP (Port 80)
             if (portNumber == 443) {
                 SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                socket = factory.createSocket(hostName, portNumber);
             } else {
                 socket = new Socket(hostName, portNumber);
             }
+
+            
+            // Send HTTP request to GET the HTML
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            out.println("GET " + path + " HTTP/1.1");
+            out.println("Host: " + hostName);
+            out.println("Connection: close");
+            out.println();
+
+            // Receive HTTP response
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            
+            String line;
+
+            // Print the HTML
+            while ((line = in.readLine()) != null) {
+                html.append(line);
+                html.append("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return html.toString();
     }
 
 
