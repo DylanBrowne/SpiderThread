@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] theArgs) {
+        System.out.println("PROGRAM STARTED");
         // I want to develop a web crawler that has multithreading, PostgreSQL, indexing/searching, Spring Boot API, and Docker support.
 
         // I dont know where to begin.
@@ -12,9 +13,13 @@ public class Main {
 
 
         System.out.print("Please enter the URL: ");
-        String userInput = sc.nextLine();
+        final String theURL = sc.nextLine();
 
+        System.out.println("You entered: " + theURL);
 
+        PageFetcher fetcher = new PageFetcher(theURL);
+        System.out.println(fetcher.fetch());
+        
         sc.close();
     }
 }
