@@ -20,11 +20,9 @@ public class HttpResponseParser {
         }
 
         // Collect digits until the next whitespace
-        if (Character.isDigit(theResponse.charAt(currentIndex))) {
-            while (currentIndex < theResponse.length() && theResponse.charAt(currentIndex) != ' ') {
-                result.append(theResponse.charAt(currentIndex));
-                currentIndex++;
-            }
+        while (currentIndex < theResponse.length() && Character.isDigit(theResponse.charAt(currentIndex))) {
+            result.append(theResponse.charAt(currentIndex));
+            currentIndex++;
         }
 
         if (result.length() == 0) {
