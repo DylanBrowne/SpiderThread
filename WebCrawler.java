@@ -1,13 +1,12 @@
-import java.util.Set;
 import java.util.HashSet;
 
 // This class takes HTML content fetched by PageFetcher.java, parses it, and extracts links to be crawled further.
 public class WebCrawler {
 
     // Keeps track of URLs already visited to prevent infinite loops
-    private HashSet<String> myVisitedUrls;
+    final private HashSet<String> myVisitedUrls;
 
-    private String myHTML;
+    final private String myHTML;
 
     // Constructor
     public WebCrawler(final String theHTML) {
@@ -17,16 +16,18 @@ public class WebCrawler {
 
     public String parse() {
         if (!isVisited()) {
-            myVisitedUrls.add(myURL);
+            // myVisitedUrls.add(myURL);
             // Parsing logic:
             
         } else {
             System.out.println("This URL has already been visited.");
         }
+
+        return "";
     }
 
     // Checks if the URL has already been visited or not
     public boolean isVisited() {
-        return visitedUrls.contains(myHTML);
+        return myVisitedUrls.contains(myHTML);
     }
 }
