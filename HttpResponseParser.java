@@ -2,14 +2,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpResponseParser {
-
+    private int currentIndex;
     
     public HttpResponseParser() {
-
+        this.currentIndex = 0;
     }
 
     public int getStatus(String theResponse) {
-        int currentIndex = 0;
+        //int currentIndex = 0;
         StringBuilder result = new StringBuilder();
 
         // Keep incrementing until the first whitespace is encountered.
@@ -38,12 +38,23 @@ public class HttpResponseParser {
             throw new IllegalArgumentException("Not a valid status code: " + statusCode);
         }
 
+        while ((theResponse.length() - currentIndex) >= 2
+                && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+
+            currentIndex++;
+        }
+
+        if ((theResponse.length() - currentIndex) >= 2
+                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+            currentIndex += 2; // Consume the \r\n at the end of the status code
+        }
         return statusCode;
     }
 
-    public HashMap<String, String> getHeaders(String theResponse) {
-        HashMap<String, String> headers = new HashMap<>();
-        int currentIndex = 0;
+    public Map<String, String> getHeaders(String theResponse) {
+        System.out.println("GETHEADERS METHOD");
+        Map<String, String> headers = new HashMap<>();
+        //int currentIndex = 0;
 
         while (currentIndex < theResponse.length()) {
             // Date: Mon, 14 Sep 2026 20:08:22 GMT\r\nContent-Type: text/html\r\n\r\n
@@ -55,7 +66,7 @@ public class HttpResponseParser {
             // Return if the end is reached
             if ((theResponse.length() - currentIndex) >= 2
                 && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-                
+                System.out.println("Program is gonna end");
                 return headers;
             }
 
@@ -84,7 +95,7 @@ public class HttpResponseParser {
                 currentIndex += 2; // Accounts for the last string "\r\n"
             }
 
-            headers.put(name.toString(), value.toString()); // Store the name and value info gathered
+            headers.put(name.toString(), value.toString().stripLeading()); // Store the name and value info gathered
         }
 
         return headers;
