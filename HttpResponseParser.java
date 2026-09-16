@@ -59,30 +59,37 @@ public class HttpResponseParser {
         while (currentIndex < theResponse.length()) {
             // Date: Mon, 14 Sep 2026 20:08:22 GMT\r\nContent-Type: text/html\r\n\r\n
 
+            // Return if the end is reached
+            if ((theResponse.length() - currentIndex) >= 2
+                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+
+                System.out.println("Program is gonna end");
+                currentIndex += 2;
+
+                return headers;
+            }
+
             StringBuilder name = new StringBuilder(); // Reset or instantiate the name var
             StringBuilder value = new StringBuilder(); // Reset or instantiate the value var
 
 
-            // Return if the end is reached
-            if ((theResponse.length() - currentIndex) >= 2
-                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-                System.out.println("Program is gonna end");
-                return headers;
-            }
-
             // Add the current character to *name* if it is before the colon
-            while (currentIndex < theResponse.length() && theResponse.charAt(currentIndex) != ':') {
+            while (currentIndex < theResponse.length() 
+                    && theResponse.charAt(currentIndex) != ':') {
+            
                 name.append(theResponse.charAt(currentIndex));
                 currentIndex++;
             }
 
-            if (currentIndex < theResponse.length() && theResponse.charAt(currentIndex) == ':') {
+            if (currentIndex < theResponse.length() 
+                    && theResponse.charAt(currentIndex) == ':') {
+
                 currentIndex++; // Accounts for the colon ':'
             }
 
             // Add the current character to *value* if it is before the string "\r\n"
             while ((theResponse.length() - currentIndex) >= 2
-                && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+                    && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
 
                 value.append(theResponse.charAt(currentIndex));
                 currentIndex++;
@@ -102,6 +109,8 @@ public class HttpResponseParser {
     }
 
     public String getHtml(String theResponse) {
+
+
         return "";
     }
 
