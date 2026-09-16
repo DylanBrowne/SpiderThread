@@ -109,9 +109,30 @@ public class HttpResponseParser {
     }
 
     public String getHtml(String theResponse) {
+        while (currentIndex < theResponse.length()) {
 
+        }
+
+
+        while ((theResponse.length() - currentIndex) >= 2
+                && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+            int hex = Integer.getInteger(theResponse.substring(currentIndex, currentIndex + 2));
+        }
 
         return "";
+    }
+
+    public boolean isHex(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+
+            if (!Character.isDigit(c)
+                && !(c >= 'a' && c <= 'f')
+                && !(c >= 'A' && c <= 'F')) {
+                    return false;
+            }
+        }
+        return !value.isEmpty();
     }
 
     public boolean isValidHttpStatusCode(final int theStatusCode) {
