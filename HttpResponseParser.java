@@ -109,15 +109,25 @@ public class HttpResponseParser {
     }
 
     public String getHtml(String theResponse) {
-        while (currentIndex < theResponse.length()) {
+        StringBuilder chunkSizeHex = new StringBuilder();
+        int chunkSize = 0;
 
+        while (currentIndex < theResponse.length() 
+                && !(theResponse.length() - currentIndex >= 2
+                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n"))) {
+                    
+            chunkSizeHex.append(theResponse.charAt(currentIndex));
+            currentIndex++;
         }
 
 
-        while ((theResponse.length() - currentIndex) >= 2
-                && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-            int hex = Integer.getInteger(theResponse.substring(currentIndex, currentIndex + 2));
+        if (chunkSizeHex.length() > 0 && isHex(chunkSizeHex.toString())) {
+            chunkSize = hexToDecimal(chunkSizeHex.toString());
+        } else {
+            throw new IllegalArgumentException("Invalid or no chunk size given: " + chunkSizeHex);
         }
+
+        System.out.println("Chunk size: " + chunkSize);
 
         return "";
     }
@@ -133,6 +143,16 @@ public class HttpResponseParser {
             }
         }
         return !value.isEmpty();
+    }
+
+    public static int hexToDecimal(String theHex) {
+        String digits = "0123456789ABCDEF";
+        theHex = theHex.toUpperCase();
+        int val = 0;
+        for (int i = 0; i < theHex.length(); i++) {
+            val = 16 * val + digits.indexOf(theHex.charAt(i));
+        }
+        return val;
     }
 
     public boolean isValidHttpStatusCode(final int theStatusCode) {
