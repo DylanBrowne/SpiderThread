@@ -108,14 +108,6 @@ public class HttpResponseParser {
         return headers;
     }
 
-    public String getHtml(String theResponse) {
-        int chunkSize = getChunkSize(theResponse);
-
-        System.out.println("Chunk size: " + chunkSize);
-
-        return "";
-    }
-
     public int getChunkSize(String theResponse) {
         StringBuilder chunkSizeHex = new StringBuilder();
         int chunkSize = 0;
@@ -137,6 +129,20 @@ public class HttpResponseParser {
         }
 
         return chunkSize;
+    }
+
+    public String getHtml(String theResponse) {
+        
+        int chunkSize = getChunkSize(theResponse);
+        StringBuilder html = new StringBuilder();
+
+        for (int i = 1; i < chunkSize; i++) {
+            html.append(theResponse.charAt(currentIndex));
+            currentIndex++;
+        }
+        currentIndex += 4;
+
+        return html.toString();
     }
 
 
