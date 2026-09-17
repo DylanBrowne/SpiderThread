@@ -109,13 +109,21 @@ public class HttpResponseParser {
     }
 
     public String getHtml(String theResponse) {
+        int chunkSize = getChunkSize(theResponse);
+
+        System.out.println("Chunk size: " + chunkSize);
+
+        return "";
+    }
+
+    public int getChunkSize(String theResponse) {
         StringBuilder chunkSizeHex = new StringBuilder();
         int chunkSize = 0;
 
         while (currentIndex < theResponse.length() 
                 && !(theResponse.length() - currentIndex >= 2
                 && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n"))) {
-                    
+
             chunkSizeHex.append(theResponse.charAt(currentIndex));
             currentIndex++;
         }
@@ -123,14 +131,14 @@ public class HttpResponseParser {
 
         if (chunkSizeHex.length() > 0 && isHex(chunkSizeHex.toString())) {
             chunkSize = hexToDecimal(chunkSizeHex.toString());
+            currentIndex += 2;
         } else {
             throw new IllegalArgumentException("Invalid or no chunk size given: " + chunkSizeHex);
         }
 
-        System.out.println("Chunk size: " + chunkSize);
-
-        return "";
+        return chunkSize;
     }
+
 
     public boolean isHex(String value) {
         for (int i = 0; i < value.length(); i++) {
