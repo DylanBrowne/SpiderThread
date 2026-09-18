@@ -21,8 +21,7 @@ public class HttpResponseParser {
         for (Map.Entry<String, String> entry : headers.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            String str = "Key: " + key.replace("\r", "\\r").replace("\n", "\\n") + "(INDEX " + currentIndex + " CHAR " + theResponse.charAt(currentIndex - 3) + "), Value: " + value.replace("\r", "\\r").replace("\n", "\\n");
-            System.out.println(str);
+            System.out.println("Key: " + key + ", Value: " + value);
         }
 
         int chunkSize = getChunkSize(theResponse);        
