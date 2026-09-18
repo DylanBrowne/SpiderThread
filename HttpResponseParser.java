@@ -8,6 +8,35 @@ public class HttpResponseParser {
         this.currentIndex = 0;
     }
 
+    public String parse(String theResponse) {
+        currentIndex = 0; // Reset index if a method has already been called that altered the index
+        System.out.println("Status: " + getStatus(theResponse));
+        Map<String, String> headers = getHeaders(theResponse);
+        
+        // for (Map.Entry<String, String> entry : headers.entrySet()) {
+        //     String key = entry.getKey();
+        //     String value = entry.getValue();
+        //     String str = "Key: " + key.replace("\r", "\\r").replace("\n", "\\n") + "(INDEX " + currentIndex + " CHAR " + theResponse.charAt(currentIndex - 3) + "), Value: " + value.replace("\r", "\\r").replace("\n", "\\n");
+        //     System.out.println(str);
+        // }
+
+        int chunkSize = getChunkSize(theResponse);        
+        StringBuilder html = new StringBuilder();
+
+        while (chunkSize != 0) {
+            System.out.println("-----------------------------------------------------------------");
+            System.out.println("Chunk size: " + chunkSize);
+            html.append(getHtml(theResponse, chunkSize));
+
+            chunkSize = getChunkSize(theResponse);
+            System.out.println("HTML: \n " + html.toString());
+        }
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println("Chunk size: " + chunkSize);
+        System.out.println("-----------------------------------------------------------------");
+        return html.toString();
+    }
+
     public int getStatus(String theResponse) {
         //int currentIndex = 0;
         StringBuilder result = new StringBuilder();
@@ -40,7 +69,6 @@ public class HttpResponseParser {
 
         while ((theResponse.length() - currentIndex) >= 2
                 && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-
             currentIndex++;
         }
 
@@ -52,7 +80,6 @@ public class HttpResponseParser {
     }
 
     public Map<String, String> getHeaders(String theResponse) {
-        System.out.println("GETHEADERS METHOD");
         Map<String, String> headers = new HashMap<>();
         //int currentIndex = 0;
 
@@ -63,7 +90,6 @@ public class HttpResponseParser {
             if ((theResponse.length() - currentIndex) >= 2
                 && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
 
-                System.out.println("Program is gonna end");
                 currentIndex += 2;
 
                 return headers;
@@ -131,20 +157,19 @@ public class HttpResponseParser {
         return chunkSize;
     }
 
-    public String getHtml(String theResponse) {
+    public String getHtml(String theResponse, int theChunkSize) {
         
-        int chunkSize = getChunkSize(theResponse);
+        //int chunkSize = getChunkSize(theResponse);
         StringBuilder html = new StringBuilder();
 
-        for (int i = 1; i < chunkSize; i++) {
+        for (int i = 0; i < theChunkSize; i++) {
             html.append(theResponse.charAt(currentIndex));
             currentIndex++;
         }
-        currentIndex += 4;
+        currentIndex += 2;
 
         return html.toString();
     }
-
 
     public boolean isHex(String value) {
         for (int i = 0; i < value.length(); i++) {
