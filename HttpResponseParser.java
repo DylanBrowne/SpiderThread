@@ -1,24 +1,29 @@
 import java.util.HashMap;
 import java.util.Map;
 
+// This class takes a raw HTTP response and parses it to extract the status code, headers, and HTML content.
 public class HttpResponseParser {
+
+    // Keeps track of the current index in the response string while parsing
     private int currentIndex;
     
+    // Constructor initializes the current index to 0
     public HttpResponseParser() {
         this.currentIndex = 0;
     }
 
+    // Parses the raw HTTP response and returns the HTML content as a string
     public String parse(String theResponse) {
         currentIndex = 0; // Reset index if a method has already been called that altered the index
         System.out.println("Status: " + getStatus(theResponse));
         Map<String, String> headers = getHeaders(theResponse);
         
-        // for (Map.Entry<String, String> entry : headers.entrySet()) {
-        //     String key = entry.getKey();
-        //     String value = entry.getValue();
-        //     String str = "Key: " + key.replace("\r", "\\r").replace("\n", "\\n") + "(INDEX " + currentIndex + " CHAR " + theResponse.charAt(currentIndex - 3) + "), Value: " + value.replace("\r", "\\r").replace("\n", "\\n");
-        //     System.out.println(str);
-        // }
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            String str = "Key: " + key.replace("\r", "\\r").replace("\n", "\\n") + "(INDEX " + currentIndex + " CHAR " + theResponse.charAt(currentIndex - 3) + "), Value: " + value.replace("\r", "\\r").replace("\n", "\\n");
+            System.out.println(str);
+        }
 
         int chunkSize = getChunkSize(theResponse);        
         StringBuilder html = new StringBuilder();
@@ -37,6 +42,7 @@ public class HttpResponseParser {
         return html.toString();
     }
 
+    // Returns the HTTP status code from the response
     public int getStatus(String theResponse) {
         //int currentIndex = 0;
         StringBuilder result = new StringBuilder();
@@ -79,6 +85,7 @@ public class HttpResponseParser {
         return statusCode;
     }
 
+    // Parses the headers from the HTTP response and returns them as a map
     public Map<String, String> getHeaders(String theResponse) {
         Map<String, String> headers = new HashMap<>();
         //int currentIndex = 0;
@@ -134,6 +141,7 @@ public class HttpResponseParser {
         return headers;
     }
 
+    // Returns the size of the next chunk in the HTTP response
     public int getChunkSize(String theResponse) {
         StringBuilder chunkSizeHex = new StringBuilder();
         int chunkSize = 0;
@@ -157,6 +165,7 @@ public class HttpResponseParser {
         return chunkSize;
     }
 
+    // Returns the HTML content from the HTTP response based on the given chunk size
     public String getHtml(String theResponse, int theChunkSize) {
         
         //int chunkSize = getChunkSize(theResponse);
@@ -171,6 +180,7 @@ public class HttpResponseParser {
         return html.toString();
     }
 
+    // Checks if the given string is a valid hexadecimal number
     public boolean isHex(String value) {
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
@@ -184,6 +194,7 @@ public class HttpResponseParser {
         return !value.isEmpty();
     }
 
+    // Converts a hexadecimal string to its decimal equivalent
     public static int hexToDecimal(String theHex) {
         String digits = "0123456789ABCDEF";
         theHex = theHex.toUpperCase();
@@ -194,6 +205,7 @@ public class HttpResponseParser {
         return val;
     }
 
+    // Checks if the given status code is a valid HTTP status code (between 100 and 599)
     public boolean isValidHttpStatusCode(final int theStatusCode) {
         return theStatusCode >= 100 && theStatusCode <= 599;
     }
