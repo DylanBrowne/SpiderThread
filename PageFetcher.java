@@ -1,5 +1,4 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import javax.net.ssl.SSLSocketFactory;
@@ -45,14 +44,13 @@ public class PageFetcher {
             out.println();
 
             // Receive HTTP response
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            InputStream in = socket.getInputStream();
             
-            String line;
+            int character;
 
             // Print the HTML
-            while ((line = in.readLine()) != null) {
-                html.append(line);
-                html.append("\n");
+            while ((character = in.read()) != -1) {
+                html.append((char) character);
             }
         } catch (Exception e) {
             e.printStackTrace();
