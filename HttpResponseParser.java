@@ -5,16 +5,16 @@ import java.util.Map;
 public class HttpResponseParser {
 
     // Keeps track of the current index in the response string while parsing
-    private int currentIndex;
+    private int myCurrentIndex;
     
     // Constructor initializes the current index to 0
     public HttpResponseParser() {
-        this.currentIndex = 0;
+        myCurrentIndex = 0;
     }
 
     // Parses the raw HTTP response and returns the HTML content as a string
     public String parse(String theResponse) {
-        currentIndex = 0; // Reset index if a method has already been called that altered the index
+        myCurrentIndex = 0; // Reset index if a method has already been called that altered the index
         System.out.println("Status: " + getStatus(theResponse));
         Map<String, String> headers = getHeaders(theResponse);
         
@@ -33,7 +33,8 @@ public class HttpResponseParser {
             html.append(getHtml(theResponse, chunkSize));
 
             chunkSize = getChunkSize(theResponse);
-            System.out.println("HTML: \n " + html.toString());
+            // Prints the HTML including the invisible chars '\n' and '\r'
+            // System.out.println("HTML: \n " + html.toString().replace("\r", "\\r").replace("\n", "\\n"));
         }
         System.out.println("-----------------------------------------------------------------");
         System.out.println("Chunk size: " + chunkSize);
@@ -43,23 +44,23 @@ public class HttpResponseParser {
 
     // Returns the HTTP status code from the response
     public int getStatus(String theResponse) {
-        //int currentIndex = 0;
+        //int myCurrentIndex = 0;
         StringBuilder result = new StringBuilder();
 
         // Keep incrementing until the first whitespace is encountered.
-        while (currentIndex < theResponse.length() && theResponse.charAt(currentIndex) != ' ') {
-            currentIndex++;
+        while (myCurrentIndex < theResponse.length() && theResponse.charAt(myCurrentIndex) != ' ') {
+            myCurrentIndex++;
         }
 
         // Skip any whitespaces between protocol and status code
-        while (currentIndex < theResponse.length() && theResponse.charAt(currentIndex) == ' ') {
-            currentIndex++;
+        while (myCurrentIndex < theResponse.length() && theResponse.charAt(myCurrentIndex) == ' ') {
+            myCurrentIndex++;
         }
 
         // Collect digits until the next whitespace
-        while (currentIndex < theResponse.length() && Character.isDigit(theResponse.charAt(currentIndex))) {
-            result.append(theResponse.charAt(currentIndex));
-            currentIndex++;
+        while (myCurrentIndex < theResponse.length() && Character.isDigit(theResponse.charAt(myCurrentIndex))) {
+            result.append(theResponse.charAt(myCurrentIndex));
+            myCurrentIndex++;
         }
 
         if (result.length() == 0) {
@@ -72,14 +73,14 @@ public class HttpResponseParser {
             throw new IllegalArgumentException("Not a valid status code: " + statusCode);
         }
 
-        while ((theResponse.length() - currentIndex) >= 2
-                && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-            currentIndex++;
+        while ((theResponse.length() - myCurrentIndex) >= 2
+                && !theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n")) {
+            myCurrentIndex++;
         }
 
-        if ((theResponse.length() - currentIndex) >= 2
-                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
-            currentIndex += 2; // Consume the \r\n at the end of the status code
+        if ((theResponse.length() - myCurrentIndex) >= 2
+                && theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n")) {
+            myCurrentIndex += 2; // Consume the \r\n at the end of the status code
         }
         return statusCode;
     }
@@ -87,16 +88,16 @@ public class HttpResponseParser {
     // Parses the headers from the HTTP response and returns them as a map
     public Map<String, String> getHeaders(String theResponse) {
         Map<String, String> headers = new HashMap<>();
-        //int currentIndex = 0;
+        //int myCurrentIndex = 0;
 
-        while (currentIndex < theResponse.length()) {
+        while (myCurrentIndex < theResponse.length()) {
             // Date: Mon, 14 Sep 2026 20:08:22 GMT\r\nContent-Type: text/html\r\n\r\n
 
             // Return if the end is reached
-            if ((theResponse.length() - currentIndex) >= 2
-                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+            if ((theResponse.length() - myCurrentIndex) >= 2
+                && theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n")) {
 
-                currentIndex += 2;
+                myCurrentIndex += 2;
 
                 return headers;
             }
@@ -106,32 +107,32 @@ public class HttpResponseParser {
 
 
             // Add the current character to *name* if it is before the colon
-            while (currentIndex < theResponse.length() 
-                    && theResponse.charAt(currentIndex) != ':') {
+            while (myCurrentIndex < theResponse.length() 
+                    && theResponse.charAt(myCurrentIndex) != ':') {
             
-                name.append(theResponse.charAt(currentIndex));
-                currentIndex++;
+                name.append(theResponse.charAt(myCurrentIndex));
+                myCurrentIndex++;
             }
 
-            if (currentIndex < theResponse.length() 
-                    && theResponse.charAt(currentIndex) == ':') {
+            if (myCurrentIndex < theResponse.length() 
+                    && theResponse.charAt(myCurrentIndex) == ':') {
 
-                currentIndex++; // Accounts for the colon ':'
+                myCurrentIndex++; // Accounts for the colon ':'
             }
 
             // Add the current character to *value* if it is before the string "\r\n"
-            while ((theResponse.length() - currentIndex) >= 2
-                    && !theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+            while ((theResponse.length() - myCurrentIndex) >= 2
+                    && !theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n")) {
 
-                value.append(theResponse.charAt(currentIndex));
-                currentIndex++;
+                value.append(theResponse.charAt(myCurrentIndex));
+                myCurrentIndex++;
             }
 
             // Make sure we are not at the end of the string and that the next two characters are in fact 'r' and 'n'
-            if ((theResponse.length() - currentIndex) >= 2 
-                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n")) {
+            if ((theResponse.length() - myCurrentIndex) >= 2 
+                && theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n")) {
 
-                currentIndex += 2; // Accounts for the last string "\r\n"
+                myCurrentIndex += 2; // Accounts for the last string "\r\n"
             }
 
             headers.put(name.toString(), value.toString().stripLeading()); // Store the name and value info gathered
@@ -145,18 +146,18 @@ public class HttpResponseParser {
         StringBuilder chunkSizeHex = new StringBuilder();
         int chunkSize = 0;
 
-        while (currentIndex < theResponse.length() 
-                && !(theResponse.length() - currentIndex >= 2
-                && theResponse.substring(currentIndex, currentIndex + 2).equals("\r\n"))) {
+        while (myCurrentIndex < theResponse.length() 
+                && !(theResponse.length() - myCurrentIndex >= 2
+                && theResponse.substring(myCurrentIndex, myCurrentIndex + 2).equals("\r\n"))) {
 
-            chunkSizeHex.append(theResponse.charAt(currentIndex));
-            currentIndex++;
+            chunkSizeHex.append(theResponse.charAt(myCurrentIndex));
+            myCurrentIndex++;
         }
 
 
         if (chunkSizeHex.length() > 0 && isHex(chunkSizeHex.toString())) {
             chunkSize = hexToDecimal(chunkSizeHex.toString());
-            currentIndex += 2;
+            myCurrentIndex += 2;
         } else {
             throw new IllegalArgumentException("Invalid or no chunk size given: " + chunkSizeHex);
         }
@@ -171,10 +172,10 @@ public class HttpResponseParser {
         StringBuilder html = new StringBuilder();
 
         for (int i = 0; i < theChunkSize; i++) {
-            html.append(theResponse.charAt(currentIndex));
-            currentIndex++;
+            html.append(theResponse.charAt(myCurrentIndex));
+            myCurrentIndex++;
         }
-        currentIndex += 2;
+        myCurrentIndex += 2;
 
         return html.toString();
     }
