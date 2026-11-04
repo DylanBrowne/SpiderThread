@@ -1,3 +1,10 @@
+package controller;
+
+import model.HtmlParser;
+import model.HttpResponseParser;
+import model.PageFetcher;
+import model.WebCrawler;
+
 import java.util.Scanner;
 
 public class Main {
