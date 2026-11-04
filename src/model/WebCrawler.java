@@ -1,3 +1,5 @@
+package model;
+
 import java.util.HashSet;
 
 // This class takes HTML content fetched by PageFetcher.java, parses it, and extracts links to be crawled further.
