@@ -1,8 +1,13 @@
 package model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import javax.net.ssl.SSLSocketFactory;
 
 
@@ -26,6 +31,24 @@ public class PageFetcher {
 
         myURL = theURL;
     }
+
+    public static boolean fetch(final String theUrl) {
+        final HttpClient client = HttpClient.newHttpClient();
+
+        final HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(theUrl))
+            .header("User-Agent", "MyWebCrawler/1.0")
+            .header("Accept", "text/html")
+            .GET()
+            .build();
+        
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return false;
+    }
+
+
+
+
 
     /**
      * Fetches the HTML response from the specified host using an HTTP GET request.
@@ -63,16 +86,16 @@ public class PageFetcher {
             out.println();
 
             // Receive HTTP response
-            InputStream in = socket.getInputStream();
+            InputStream input = socket.getInputStream();
             
             int character;
 
             // Print the HTML
-            while ((character = in.read()) != -1) {
+            while ((character = input.read()) != -1) {
                 html.append((char) character);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+
         }
         return html.toString();
     }
