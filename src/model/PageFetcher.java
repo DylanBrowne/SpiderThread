@@ -32,7 +32,7 @@ public class PageFetcher {
         myURL = theURL;
     }
 
-    public static boolean fetch(final String theUrl) {
+    public static HttpResponse fetchPage(final String theUrl) throws IOException, InterruptedException {
         final HttpClient client = HttpClient.newHttpClient();
 
         final HttpRequest request = HttpRequest.newBuilder()
@@ -43,7 +43,8 @@ public class PageFetcher {
             .build();
         
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return false;
+
+        return response;
     }
 
 
@@ -60,7 +61,7 @@ public class PageFetcher {
      * @return the HTTP response received from the server, or an empty string
      * if an exception occurs
      */
-    public String fetch() {
+    private String fetch() {
         final String hostName = getHostName();
         final int portNumber = getPortNumber();
         final String path = getPath();
