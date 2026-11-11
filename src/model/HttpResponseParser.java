@@ -6,15 +6,20 @@ import java.util.Map;
 // This class takes a raw HTTP response and parses it to extract the status code, headers, and HTML content.
 public class HttpResponseParser {
 
-    // Keeps track of the current index in the response string while parsing
+    /** Keeps track of the current index in the response string while parsing */
     private int myCurrentIndex;
     
-    // Constructor initializes the current index to 0
+    /** Constructor initializes the current index to 0 */
     public HttpResponseParser() {
         myCurrentIndex = 0;
     }
 
-    // Parses the raw HTTP response and returns the HTML content as a string
+    /**
+     * Parses the raw HTTP response and returns the HTML content as a string.
+     * 
+     * @param theResponse the HTML response provided by the URL.
+     * @return the HTML parsed including the status code, headers, and chunk size.
+     */
     public String parse(String theResponse) {
         myCurrentIndex = 0; // Reset index if a method has already been called that altered the index
         System.out.println("Status: " + getStatus(theResponse));
@@ -44,7 +49,12 @@ public class HttpResponseParser {
         return html.toString();
     }
 
-    // Returns the HTTP status code from the response
+    /**
+     * Returns the HTTP status code from the response.
+     * 
+     * @param theResponse the HTML response provided by the URL.
+     * @return the status code.
+     */
     public int getStatus(String theResponse) {
         //int myCurrentIndex = 0;
         StringBuilder result = new StringBuilder();
@@ -87,7 +97,12 @@ public class HttpResponseParser {
         return statusCode;
     }
 
-    // Parses the headers from the HTTP response and returns them as a map
+    /**
+     * Parses the headers from the HTTP response and returns them as a map.
+     * 
+     * @param theResponse the HTML response provided by the URL.
+     * @return the headers mapped name to value.
+     */
     public Map<String, String> getHeaders(String theResponse) {
         Map<String, String> headers = new HashMap<>();
         //int myCurrentIndex = 0;
@@ -143,7 +158,12 @@ public class HttpResponseParser {
         return headers;
     }
 
-    // Returns the size of the next chunk in the HTTP response
+    /**
+     * Returns the size of the next chunk in the HTTP response.
+     * 
+     * @param theResponse the HTML response provided by the URL.
+     * @return the chunk size in hexadecimal bytes.
+     */
     public int getChunkSize(String theResponse) {
         StringBuilder chunkSizeHex = new StringBuilder();
         int chunkSize = 0;
@@ -167,7 +187,13 @@ public class HttpResponseParser {
         return chunkSize;
     }
 
-    // Returns the HTML content from the HTTP response based on the given chunk size
+    /**
+     * Returns the HTML content from the HTTP response based on the given chunk size.
+     * 
+     * @param theResponse the HTML response provided by the URL.
+     * @param theChunkSize the chunk size in hexadecimal bytes.
+     * @return The entire HTML as a String.
+     */
     public String getHtml(String theResponse, int theChunkSize) {
         
         //int chunkSize = getChunkSize(theResponse);
@@ -182,10 +208,15 @@ public class HttpResponseParser {
         return html.toString();
     }
 
-    // Checks if the given string is a valid hexadecimal number
-    public boolean isHex(String value) {
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
+    /**
+     * Checks if the given string is a valid hexadecimal number.
+     * 
+     * @param theValue the chunk size.
+     * @return true if the given value is hexadecimal; false otherwise.
+     */
+    public boolean isHex(String theValue) {
+        for (int i = 0; i < theValue.length(); i++) {
+            char c = theValue.charAt(i);
 
             if (!Character.isDigit(c)
                 && !(c >= 'a' && c <= 'f')
@@ -193,10 +224,15 @@ public class HttpResponseParser {
                     return false;
             }
         }
-        return !value.isEmpty();
+        return !theValue.isEmpty();
     }
 
-    // Converts a hexadecimal string to its decimal equivalent
+    /**
+     * Converts a hexadecimal string to its decimal equivalent.
+     * 
+     * @param theHex the hexadecimal value.
+     * @return the decimal equivalent of the hexadecimal input.
+     */
     public static int hexToDecimal(String theHex) {
         String digits = "0123456789ABCDEF";
         theHex = theHex.toUpperCase();
@@ -207,7 +243,12 @@ public class HttpResponseParser {
         return val;
     }
 
-    // Checks if the given status code is a valid HTTP status code (between 100 and 599)
+    /**
+     * Checks if the given status code is a valid HTTP status code (between 100 and 599).
+     * 
+     * @param theStatusCode the status code given by the URL.
+     * @return true if the status code is a valid code; false otherwise.
+     */
     public boolean isValidHttpStatusCode(final int theStatusCode) {
         return theStatusCode >= 100 && theStatusCode <= 599;
     }

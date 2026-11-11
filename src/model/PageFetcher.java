@@ -9,9 +9,16 @@ import javax.net.ssl.SSLSocketFactory;
 // This class takes a URL and fetches its raw HTML content to be passed to WebCrawler.java
 public class PageFetcher {
 
+    /** The URL being requested */
     final private String myURL;
 
-    // Constructor
+    /**
+     * Constructs a PageFetcher using the specified URL.
+     * Validates that the provided URL is not null or empty before storing it.
+     *
+     * @param theURL the URL of the webpage to fetch
+     * @throws IllegalArgumentException if the provided URL is null or empty
+     */
     public PageFetcher(final String theURL) {
         if (theURL == null || theURL.trim().isEmpty()) {
             throw new IllegalArgumentException("URL field not provided.");
@@ -20,6 +27,16 @@ public class PageFetcher {
         myURL = theURL;
     }
 
+    /**
+     * Fetches the HTML response from the specified host using an HTTP GET request.
+     * Establishes a secure connection using {@link SSLSocket} when connecting
+     * through port 443, or a regular {@link Socket} for other ports.
+     * Reads the server's response until the connection is closed and returns
+     * the response as a string.
+     *
+     * @return the HTTP response received from the server, or an empty string
+     * if an exception occurs
+     */
     public String fetch() {
         final String hostName = getHostName();
         final int portNumber = getPortNumber();
@@ -61,7 +78,14 @@ public class PageFetcher {
     }
 
 
-    // Extracts the host name from the URL, which is the part between "://" and the next "/"
+    /**
+     * Extracts the host name from the stored URL.
+     * Identifies the host by locating the characters following the protocol
+     * separator ("://") and ending at the next forward slash or the end
+     * of the URL if no path is present.
+     *
+     * @return the host name extracted from the URL, or null if the URL is null
+     */
     private String getHostName() {
         if (myURL == null) return null;
         // 0123456789
@@ -76,7 +100,14 @@ public class PageFetcher {
         return myURL.substring(start, end);
     }
 
-    // Determines the port number based on the protocol specified in the URL. Defaults to 80 for HTTP and 443 for HTTPS. Throws an exception for unsupported protocols.
+    /**
+     * Determines the port number based on the protocol specified in the stored URL.
+     * Uses port 443 for HTTPS connections and port 80 for HTTP connections.
+     *
+     * @return the port number corresponding to the URL protocol
+     * @throws IllegalArgumentException if the URL uses an unsupported protocol
+     * or does not specify a protocol
+     */
     private int getPortNumber() {
         if (myURL.toLowerCase().startsWith("https://")) {
             return 443;
@@ -87,7 +118,13 @@ public class PageFetcher {
         }
     }
 
-    // Extracts the path from the URL, which is everything after the host name
+    /**
+     * Extracts the resource path from the stored URL.
+     * Locates the portion of the URL immediately following the host name.
+     * Returns "/" if the URL does not contain a path.
+     *
+     * @return the resource path specified in the URL, or "/" if no path exists
+     */
     private String getPath() {
         String host = getHostName();
         int pathStart = myURL.indexOf(host) + host.length();

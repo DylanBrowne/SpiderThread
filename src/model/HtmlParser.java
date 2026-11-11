@@ -1,12 +1,13 @@
 package model;
 
 public class HtmlParser {
-
-    public HtmlParser() {
-
-    }
-
-    // Parses the given HTML string and prints out the tags and text bodies
+    /**
+     * Parses an HTML string by traversing its contents and identifying HTML tags
+     * and text bodies. Extracts and prints each tag and its corresponding text
+     * content as they are encountered.
+     *
+     * @param theHtml the HTML string to parse
+     */
     public void parse(final String theHtml) {
         int currentIndex = 0;
         // Traverse the entire HTML
@@ -33,7 +34,16 @@ public class HtmlParser {
         currentIndex++; // moves past the last '\n' at the end of the HTML
     }
 
-    // Extracts the tag from the HTML starting at the given index
+    /**
+     * Extracts an HTML tag beginning at the specified index in an HTML string.
+     * Traverses the HTML until the closing angle bracket ('>') is encountered.
+     *
+     * @param theCurrentIndex the starting index of the HTML tag
+     * @param theHtml the HTML string containing the tag
+     * @return the extracted tag content, excluding the closing angle bracket
+     * @throws IllegalArgumentException if the tag reaches the end of the HTML
+     * string without encountering a closing angle bracket
+     */
     public String getTag(int theCurrentIndex, final String theHtml) {
         StringBuilder tag = new StringBuilder();
         char theCurrentChar = theHtml.charAt(theCurrentIndex);
@@ -51,7 +61,16 @@ public class HtmlParser {
         return tag.toString();
     }
 
-    // Extracts the text body from the HTML starting at the given index
+    /**
+     * Extracts the text content beginning at the specified index in an HTML string.
+     * Traverses the HTML until the beginning of the next tag ('<') is encountered.
+     *
+     * @param theCurrentIndex the starting index of the text content in the HTML string
+     * @param theHtml the HTML string to extract text from
+     * @return the extracted text content preceding the next HTML tag
+     * @throws IllegalArgumentException if the text content reaches the end of the
+     * HTML string without encountering another tag
+     */
     public String getBody(int theCurrentIndex, final String theHtml) {
         StringBuilder body = new StringBuilder();
         char theCurrentChar = theHtml.charAt(theCurrentIndex);
