@@ -31,21 +31,35 @@ public class HttpResponseParser {
             System.out.println("Key: " + key + ", Value: " + value);
         }
 
-        int chunkSize = getChunkSize(theResponse);        
         StringBuilder html = new StringBuilder();
+        
+        if (headers.containsKey("Transfer-Encoding")) {
+            int chunkSize = getChunkSize(theResponse);        
+            
 
-        while (chunkSize != 0) {
+            while (chunkSize != 0) {
+                System.out.println("-----------------------------------------------------------------");
+                System.out.println("Chunk size: " + chunkSize);
+                html.append(getHtml(theResponse, chunkSize));
+
+                chunkSize = getChunkSize(theResponse);
+                // Prints the HTML including the invisible chars '\n' and '\r'
+                // System.out.println("HTML: \n " + html.toString().replace("\r", "\\r").replace("\n", "\\n"));
+            }
             System.out.println("-----------------------------------------------------------------");
             System.out.println("Chunk size: " + chunkSize);
-            html.append(getHtml(theResponse, chunkSize));
-
-            chunkSize = getChunkSize(theResponse);
+            System.out.println("-----------------------------------------------------------------");
+        } else if (headers.containsKey("Content-Length")) {
+            System.out.println("PARSE");
+            int bytes = Integer.parseInt(headers.get("Content-Length"));
+            
+            html.append(getHtml(theResponse, bytes));
             // Prints the HTML including the invisible chars '\n' and '\r'
-            // System.out.println("HTML: \n " + html.toString().replace("\r", "\\r").replace("\n", "\\n"));
+            System.out.println("HTML: \n " + html.toString().replace("\r", "\\r").replace("\n", "\\n"));
+            
+
         }
-        System.out.println("-----------------------------------------------------------------");
-        System.out.println("Chunk size: " + chunkSize);
-        System.out.println("-----------------------------------------------------------------");
+        System.out.println("Return");
         return html.toString();
     }
 
@@ -188,18 +202,18 @@ public class HttpResponseParser {
     }
 
     /**
-     * Returns the HTML content from the HTTP response based on the given chunk size.
+     * Returns the HTML content from the HTTP response based on the given size.
      * 
      * @param theResponse the HTML response provided by the URL.
      * @param theChunkSize the chunk size in hexadecimal bytes.
      * @return The entire HTML as a String.
      */
-    public String getHtml(String theResponse, int theChunkSize) {
+    public String getHtml(String theResponse, int theSize) {
         
         //int chunkSize = getChunkSize(theResponse);
         StringBuilder html = new StringBuilder();
 
-        for (int i = 0; i < theChunkSize; i++) {
+        for (int i = 0; i < theSize; i++) {
             html.append(theResponse.charAt(myCurrentIndex));
             myCurrentIndex++;
         }
