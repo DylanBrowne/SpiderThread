@@ -1,3 +1,7 @@
+// ARCHIVED:
+// Replaced by Java's built-in HttpClient API.
+// Retained for reference to manual HTTP response parsing.
+
 package model;
 
 import java.util.HashMap;
