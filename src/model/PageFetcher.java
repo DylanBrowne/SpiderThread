@@ -17,6 +17,8 @@ public class PageFetcher {
     /** The URL being requested */
     final private String myURL;
 
+    private static final HttpClient CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
+
     /**
      * Constructs a PageFetcher using the specified URL.
      * Validates that the provided URL is not null or empty before storing it.
@@ -33,8 +35,6 @@ public class PageFetcher {
     }
 
     public static HttpResponse fetchPage(final String theUrl) throws IOException, InterruptedException {
-        final HttpClient client = HttpClient.newHttpClient();
-
         final HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(theUrl))
             .header("User-Agent", "MyWebCrawler/1.0")
@@ -42,14 +42,14 @@ public class PageFetcher {
             .GET()
             .build();
         
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         return response;
     }
 
 
 
-
+    // MANUALLY IMPLEMENTED METHODS BELOW ---- NOT IN USE BUT NOT DELETED FOR LEARNING PURPOSES
 
     /**
      * Fetches the HTML response from the specified host using an HTTP GET request.
@@ -61,6 +61,7 @@ public class PageFetcher {
      * @return the HTTP response received from the server, or an empty string
      * if an exception occurs
      */
+    @SuppressWarnings("unused")
     private String fetch() {
         final String hostName = getHostName();
         final int portNumber = getPortNumber();
@@ -110,6 +111,7 @@ public class PageFetcher {
      *
      * @return the host name extracted from the URL, or null if the URL is null
      */
+    @SuppressWarnings("unused")
     private String getHostName() {
         if (myURL == null) return null;
         // 0123456789
@@ -132,6 +134,7 @@ public class PageFetcher {
      * @throws IllegalArgumentException if the URL uses an unsupported protocol
      * or does not specify a protocol
      */
+    @SuppressWarnings("unused")
     private int getPortNumber() {
         if (myURL.toLowerCase().startsWith("https://")) {
             return 443;
@@ -149,6 +152,7 @@ public class PageFetcher {
      *
      * @return the resource path specified in the URL, or "/" if no path exists
      */
+    @SuppressWarnings("unused")
     private String getPath() {
         String host = getHostName();
         int pathStart = myURL.indexOf(host) + host.length();
